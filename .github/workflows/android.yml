@@ -25,6 +25,7 @@ jobs:
         mkdir build-${{ matrix.target }}
         mkdir -p install/${{ matrix.target }}
         cd build-${{ matrix.target }}
+        PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
         ../Configure ${{ matrix.target }} --prefix=$(cd ../install/${{ matrix.target }}; pwd)
 
     - name: make
