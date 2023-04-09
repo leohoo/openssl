@@ -29,10 +29,12 @@ jobs:
         ../Configure ${{ matrix.target }} --prefix=$(cd ../install/${{ matrix.target }}; pwd)
 
     - name: make
-      run: make -s -j4
+      run: |
+        PATH=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+        make -s -j4
       working-directory: build-${{ matrix.target }}
 
-    - name: Make
+    - name: make install
       run: make install_sw
       working-directory: build-${{ matrix.target }}
 
