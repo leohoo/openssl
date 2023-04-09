@@ -1,0 +1,42 @@
+name: Android CI
+
+on: [pull_request, push]
+
+permissions:
+  contents: read
+
+jobs:
+  android-build:
+    strategy:
+      fail-fast: true
+      matrix:
+        target:
+        - android-arm
+        - android-arm64
+        - android-x86
+        - android-x86_64
+
+    runs-on: ubuntu-latest
+        
+    steps:
+    - uses: actions/checkout@v3
+    - name: config
+      run: |
+        mkdir build-${{ matrix.target }}
+        mkdir -p install/${{ matrix.target }}
+        cd build-${{ matrix.target }}
+        ../Configure ${{ matrix.target }} --prefix=$(cd ../install/${{ matrix.target }}; pwd)
+
+    - name: make
+      run: make -s -j4
+      working-directory: build-${{ matrix.target }}
+
+    - name: Make
+      run: make install_sw
+      working-directory: build-${{ matrix.target }}
+
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.target }}-build
+        path: install/${{ matrix.target }}
